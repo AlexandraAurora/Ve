@@ -22,3 +22,5 @@ You may not use this project to make profit like money
     - [pixelomer](https://twitter.com/pixelomer)
   - Taught Me How To Use Specifiers
     - [LacertosusDeus](https://twitter.com/LacertosusDeus), [D_Gh0st](https://twitter.com/d_gh0st), [MrGcGamer](https://twitter.com/MrGcGamer)
+  - Duo Twitter Cell
+    - [arm64e](https://twitter.com/arm64e), [MrGcGamer](https://twitter.com/MrGcGamer)
