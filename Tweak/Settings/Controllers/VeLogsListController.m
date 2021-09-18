@@ -72,7 +72,7 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
 
 
     // statistics & search bar
-    [_specifiers addObject:[PSSpecifier groupSpecifierWithName:@"Statistics & Search"]];
+    [_specifiers addObject:[PSSpecifier groupSpecifierWithName:@"Statistics"]];
 
     PSSpecifier* statisticsSpecifier = [PSSpecifier preferenceSpecifierNamed:nil target:self set:nil get:nil detail:nil cell:PSStaticTextCell edit:nil];
     [statisticsSpecifier setProperty:[VeStatisticsCell class] forKey:@"cellClass"];
