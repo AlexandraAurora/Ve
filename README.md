@@ -1,0 +1,24 @@
+# Vē
+Natively integrated notification logger
+
+## Installation
+1. Add this repository to your package manager: https://repo.litten.love
+2. Install Vē
+
+## Compiling
+  - [Theos](https://theos.dev/) is required to compile the project
+  - No dependencies
+  - You may want to edit the root `Makefile` to use your Theos SDK
+
+## License
+If you take code from this repository please link it, or my [Twitter](https://twitter.com/schneelittchen) to your project
+You may not redistribute this source code or packages from it
+You may not use this project to make profit like money
+
+## Credits
+  - Idea, Icons And Banner
+    - [74k1_](https://twitter.com/74k1_)
+  - Implementing The Main Specifier
+    - [pixelomer](https://twitter.com/pixelomer)
+  - Taught Me How To Use Specifiers
+    - [LacertosusDeus](https://twitter.com/LacertosusDeus), [D_Gh0st](https://twitter.com/d_gh0st), [MrGcGamer](https://twitter.com/MrGcGamer)
