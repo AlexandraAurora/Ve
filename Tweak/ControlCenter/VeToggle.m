@@ -42,7 +42,7 @@ BOOL biometricProtectionSwitch = NO;
 
     if (biometricProtectionSwitch) {
         LAContext* laContext = [LAContext new];
-        [laContext evaluatePolicy:LAPolicyDeviceOwnerAuthentication localizedReason:@"Vé needs to make sure that you are permitted to take this action." reply:^(BOOL success, NSError* _Nullable error) {
+        [laContext evaluatePolicy:LAPolicyDeviceOwnerAuthentication localizedReason:@"Vē needs to make sure that you are permitted to take this action." reply:^(BOOL success, NSError* _Nullable error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
                     [[self preferences] setBool:![self isSelected] forKey:@"isLoggingTemporarilyDisabled"];

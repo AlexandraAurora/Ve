@@ -4,10 +4,6 @@
 HBPreferences* preferences = nil;
 BOOL enabled = NO;
 
-HBPreferences* logs = nil;
-NSUInteger totalLoggedNotificationCount = 0;
-NSUInteger lastHighestID = 0;
-
 // household
 NSUInteger entryLimitValue = 1;
 BOOL deleteIfOlderThan30DaysSwitch = YES;

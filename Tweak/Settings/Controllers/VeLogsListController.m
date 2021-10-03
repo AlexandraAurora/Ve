@@ -38,7 +38,7 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
     // biometric protection
     if (biometricProtectionSwitch && !authenticated) {
         LAContext* laContext = [LAContext new];
-        [laContext evaluatePolicy:LAPolicyDeviceOwnerAuthentication localizedReason:@"Vé needs to make sure that you are permitted to view logs." reply:^(BOOL success, NSError* _Nullable error) {
+        [laContext evaluatePolicy:LAPolicyDeviceOwnerAuthentication localizedReason:@"Vē needs to make sure that you are permitted to view logs." reply:^(BOOL success, NSError* _Nullable error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
                     authenticated = YES;

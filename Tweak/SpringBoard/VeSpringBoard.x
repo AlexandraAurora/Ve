@@ -11,6 +11,7 @@
 	if (isLoggingTemporarilyDisabled) return;
 
 	BBBulletin* bulletin = arg1;
+	HBPreferences* logs = [[HBPreferences alloc] initWithIdentifier:@"love.litten.ve-logs"];
 
 	// return if the notification comes from a blocked bundle identifier or contains an excluded phrase
 	NSArray* blockedBundleIdentifiers = [logs objectForKey:@"blockedBundleIdentifiers"];
@@ -45,7 +46,7 @@
 			@"attachments" : attachments ?: @"",
 			@"date" : [NSDate date] ?: @""
 		}];
-		[newLogs addObjectsFromArray:[logs objectForKey:@"loggedNotifications"]]; // add all other stored logs
+		// [newLogs addObjectsFromArray:[logs objectForKey:@"loggedNotifications"]]; // add all other stored logs
 
 		if (entryLimitValue > 1 && [newLogs count] >= entryLimitValue) { // delete all logs that are above the entry limit, if one is set
 			while ([newLogs count] > entryLimitValue) {
@@ -54,8 +55,11 @@
 		}
 
 		[logs setObject:newLogs forKey:@"loggedNotifications"];
-		[logs setUnsignedInteger:totalLoggedNotificationCount += 1 forKey:@"totalLoggedNotificationCount"];
-		[logs setUnsignedInteger:lastHighestID += 1 forKey:@"lastHighestID"];
+
+		NSUInteger totalLoggedNotificationCount = [[logs objectForKey:@"totalLoggedNotificationCount"] intValue];
+		NSUInteger lastHighestID = [[logs objectForKey:@"lastHighestID"] intValue];
+		[logs setUnsignedInteger:totalLoggedNotificationCount += 1  forKey:@"totalLoggedNotificationCount"];
+		[logs setUnsignedInteger:lastHighestID += 1  forKey:@"lastHighestID"];
 	}
 
 
@@ -94,10 +98,6 @@
 
 	[preferences registerBool:&enabled default:NO forKey:@"Enabled"];
 	if (!enabled) return;
-
-	logs = [[HBPreferences alloc] initWithIdentifier:@"love.litten.ve-logs"];
-	[logs registerUnsignedInteger:&totalLoggedNotificationCount default:0 forKey:@"totalLoggedNotificationCount"];
-	[logs registerUnsignedInteger:&lastHighestID default:0 forKey:@"lastHighestID"];
 
 	// household
 	[preferences registerUnsignedInteger:&entryLimitValue default:1 forKey:@"entryLimit"];
