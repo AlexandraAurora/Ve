@@ -76,7 +76,7 @@
 
             for (int i = 0; i < [storedLogs count]; i++) {
                 NSDictionary* log = [storedLogs objectAtIndex:i];
-                if ([[log objectForKey:@"id"] intValue] == [[[[alertController textFields] firstObject] text] intValue]) {
+                if ([[log objectForKey:@"identifier"] intValue] == [[[[alertController textFields] firstObject] text] intValue]) {
                     [storedLogs removeObjectAtIndex:i];
                     break;
                 }
@@ -179,7 +179,7 @@
 
         for (int i = 0; i < [storedLogs count]; i++) {
             NSDictionary* log = [storedLogs objectAtIndex:i];
-            if ([[log objectForKey:@"id"] intValue] >= start && [[log objectForKey:@"id"] intValue] <= end) {
+            if ([[log objectForKey:@"identifier"] intValue] >= start && [[log objectForKey:@"identifier"] intValue] <= end) {
                 [storedLogs removeObjectAtIndex:i];
                 break;
             }

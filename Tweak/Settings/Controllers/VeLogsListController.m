@@ -120,7 +120,7 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
         [logSpecifier setButtonAction:@selector(expandLog:)];
         [logSpecifier setProperty:@(YES) forKey:@"enabled"];
         [logSpecifier setProperty:@"60" forKey:@"height"];
-        [logSpecifier setProperty:[log objectForKey:@"id"] forKey:@"id"];
+        [logSpecifier setProperty:[log objectForKey:@"identifier"] forKey:@"identifier"];
         [logSpecifier setProperty:[log objectForKey:@"bundleID"] forKey:@"bundleID"];
         [logSpecifier setProperty:[log objectForKey:@"displayName"] forKey:@"displayName"];
         [logSpecifier setProperty:title forKey:@"title"];
@@ -167,7 +167,7 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
 - (void)expandLog:(PSSpecifier *)specifier { // expand the selected log
 
     VeDetailViewListController* detailViewListController = [VeDetailViewListController new];
-    [detailViewListController setNotificationID:[specifier.properties[@"id"] intValue]];
+    [detailViewListController setNotificationID:[specifier.properties[@"identifier"] intValue]];
     [detailViewListController setNotificationBundleID:specifier.properties[@"bundleID"]];
     [detailViewListController setNotificationDisplayName:specifier.properties[@"displayName"]];
     [detailViewListController setNotificationTitle:specifier.properties[@"title"]];

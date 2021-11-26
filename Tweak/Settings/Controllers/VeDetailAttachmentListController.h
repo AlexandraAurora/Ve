@@ -5,7 +5,7 @@
 #import "../PrivateHeaders.h"
 
 @interface VeDetailAttachmentListController : PSListController
-@property(nonatomic, assign)NSData* attachmentData;
+@property(atomic, assign)NSData* attachmentData;
 @property(nonatomic, retain)_UIGrabber* grabber;
 - (void)copyAttachment;
 - (void)saveAttachment;

@@ -161,7 +161,7 @@
 
         for (int i = 0; i < [storedLogs count]; i++) {
             NSDictionary* log = [storedLogs objectAtIndex:i];
-            if ([[log objectForKey:@"id"] intValue] == [self notificationID]) {
+            if ([[log objectForKey:@"identifier"] intValue] == [self notificationID]) {
                 [storedLogs removeObjectAtIndex:i];
                 break;
             }

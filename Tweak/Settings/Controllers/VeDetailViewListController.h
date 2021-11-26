@@ -9,15 +9,15 @@
 #import <Cephei/HBPreferences.h>
 
 @interface VeDetailViewListController : PSListController
-@property(nonatomic, assign)NSUInteger notificationID;
-@property(nonatomic, assign)NSString* notificationBundleID;
-@property(nonatomic, assign)NSString* notificationDisplayName;
-@property(nonatomic, assign)NSString* notificationTitle;
-@property(nonatomic, assign)NSString* notificationMessage;
-@property(nonatomic, assign)NSArray* notificationAttachments;
-@property(nonatomic, assign)NSString* dateFormat;
-@property(nonatomic, assign)NSString* timeFormat;
-@property(nonatomic, assign)NSDate* notificationDate;
+@property(atomic, assign)NSUInteger notificationID;
+@property(atomic, assign)NSString* notificationBundleID;
+@property(atomic, assign)NSString* notificationDisplayName;
+@property(atomic, assign)NSString* notificationTitle;
+@property(atomic, assign)NSString* notificationMessage;
+@property(atomic, assign)NSArray* notificationAttachments;
+@property(atomic, assign)NSString* dateFormat;
+@property(atomic, assign)NSString* timeFormat;
+@property(atomic, assign)NSDate* notificationDate;
 @property(nonatomic, retain)_UIGrabber* grabber;
 - (void)copyContent:(PSSpecifier *)specifier;
 - (void)presentAttachment:(PSSpecifier *)specifier;

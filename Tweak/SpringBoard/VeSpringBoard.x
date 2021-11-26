@@ -38,7 +38,7 @@
 		// save all details
 		NSMutableArray* newLogs = [NSMutableArray new];
 		[newLogs addObject:@{
-			@"id" : [NSNumber numberWithUnsignedInteger:(NSUInteger)[[logs objectForKey:@"lastHighestID"] intValue] + 1],
+			@"identifier" : [NSNumber numberWithUnsignedInteger:(NSUInteger)[[logs objectForKey:@"lastHighestID"] intValue] + 1],
 			@"bundleID" : [bulletin sectionID] ?: @"",
 			@"displayName" : [[[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:[bulletin sectionID]] displayName] ?: @"",
 			@"title" : [bulletin title] ?: @"",
@@ -46,7 +46,7 @@
 			@"attachments" : attachments ?: @"",
 			@"date" : [NSDate date] ?: @""
 		}];
-		// [newLogs addObjectsFromArray:[logs objectForKey:@"loggedNotifications"]]; // add all other stored logs
+		[newLogs addObjectsFromArray:[logs objectForKey:@"loggedNotifications"]]; // add all other stored logs
 
 		if (entryLimitValue > 1 && [newLogs count] >= entryLimitValue) { // delete all logs that are above the entry limit, if one is set
 			while ([newLogs count] > entryLimitValue) {
@@ -80,7 +80,6 @@
 					if ([components day] > 30) [currentlyStoredLogs removeObjectAtIndex:i];
 				}
 
-				[logs removeObjectForKey:@"loggedNotifications"];
 				[logs setObject:currentlyStoredLogs forKey:@"loggedNotifications"];
 			});
 		}
