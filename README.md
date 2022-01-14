@@ -1,4 +1,4 @@
-# Vē
+# Vē 💌
 Natively integrated notification logger
 
 ## Installation
