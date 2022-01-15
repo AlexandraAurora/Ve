@@ -71,7 +71,7 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
     NSArray* logs = [logsDictionary objectForKey:@"loggedNotifications"];
 
 
-    // statistics & search bar
+    // statistics
     [_specifiers addObject:[PSSpecifier groupSpecifierWithName:@"Statistics"]];
 
     PSSpecifier* statisticsSpecifier = [PSSpecifier preferenceSpecifierNamed:nil target:self set:nil get:nil detail:nil cell:PSStaticTextCell edit:nil];
@@ -131,7 +131,6 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
         [logSpecifier setProperty:dateFormatValue forKey:@"dateFormat"];
         [_specifiers addObject:logSpecifier];
     }
-
 
 	return _specifiers;
 
