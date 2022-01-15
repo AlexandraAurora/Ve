@@ -24,7 +24,7 @@
 	[[self attachmentImageView] setTranslatesAutoresizingMaskIntoConstraints:NO];
     [NSLayoutConstraint activateConstraints:@[
         [self.attachmentImageView.topAnchor constraintEqualToAnchor:self.topAnchor constant:8],
-		[self.attachmentImageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16],
+		[self.attachmentImageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:8],
 		[self.attachmentImageView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-8],
 		[self.attachmentImageView.widthAnchor constraintEqualToConstant:70]
     ]];
