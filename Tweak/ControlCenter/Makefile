@@ -1,3 +1,5 @@
+GO_EASY_ON_ME = 1
+
 BUNDLE_NAME = VeToggle
 $(BUNDLE_NAME)_FILES = VeToggle.m
 $(BUNDLE_NAME)_CFLAGS = -fobjc-arc -DTHEOS_LEAN_AND_MEAN

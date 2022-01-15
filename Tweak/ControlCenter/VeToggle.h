@@ -3,8 +3,6 @@
 #import <LocalAuthentication/LocalAuthentication.h>
 #import <Cephei/HBPreferences.h>
 
-
-
 @interface VeToggle : CCUIToggleModule
 @property(nonatomic, retain)HBPreferences* preferences;
 @end
