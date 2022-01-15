@@ -1,7 +1,7 @@
 Package: love.litten.ve
 Name: Vē 💌
 Depends: mobilesubstrate, preferenceloader, firmware (>= 13.0), ws.hbang.common (>= 1.14)
-Version: 1.0
+Version: 1.0.1
 Architecture: iphoneos-arm
 Description: Natively integrated notification logger
 Maintainer: Litten
