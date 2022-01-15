@@ -80,7 +80,7 @@
             [attachmentSpecifier setButtonAction:@selector(presentAttachment:)];
             [attachmentSpecifier setProperty:@(YES) forKey:@"enabled"];
             [attachmentSpecifier setProperty:@"70" forKey:@"height"];
-            [attachmentSpecifier setProperty:[NSData dataWithData:[[self notificationAttachments] objectAtIndex:i]] forKey:@"attachmentData"];
+            [attachmentSpecifier setProperty:[NSData dataWithContentsOfFile:[NSString stringWithFormat:@"%@%@",@"/var/mobile/Media/Vē/", [[self notificationAttachments] objectAtIndex:i]]] forKey:@"attachmentData"];
             [attachmentSpecifier setProperty:[NSString stringWithFormat:@"%d", i + 1] forKey:@"attachmentIndex"];
             [_specifiers addObject:attachmentSpecifier];
         }

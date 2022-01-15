@@ -10,7 +10,7 @@
 
 	BOOL isLoggingTemporarilyDisabled = [[preferences valueForKey:@"isLoggingTemporarilyDisabled"] boolValue];
 	if (isLoggingTemporarilyDisabled) return;
-
+	
 	BBBulletin* bulletin = arg1;
 	HBPreferences* logs = [[HBPreferences alloc] initWithIdentifier:@"love.litten.ve-logs"];
 
@@ -26,14 +26,26 @@
 	}
 
 	if ([bulletin sectionID] && [bulletin title]) { // save the incoming notification and its details
-		// add all attachments as data to an array
+		// save all attachments
 		NSURL* attachmentsURL = [[[bulletin primaryAttachment] URL] URLByDeletingLastPathComponent];
 		NSString* attachmentsDirectoryPath = [[attachmentsURL absoluteString] stringByReplacingOccurrencesOfString:@"file://" withString:@""];
 		NSArray* attachmentsDirectory = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:attachmentsDirectoryPath error:nil];
 		NSMutableArray* attachments = [NSMutableArray new];
 		for (int i = 0; i < [attachmentsDirectory count]; i++) {
-			NSData* imageData = UIImageJPEGRepresentation([UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@%@", attachmentsDirectoryPath, [attachmentsDirectory objectAtIndex:i]]], 1);
-			if (imageData) [attachments addObject:imageData];
+			// create the attachments directory if it doesn't exist yet
+			NSString* directoryPath = @"/var/mobile/Media/Vē/";
+			BOOL isDirectory;
+			NSFileManager* fileManager = [NSFileManager defaultManager];
+			if (![fileManager fileExistsAtPath:directoryPath isDirectory:&isDirectory]) [fileManager createDirectoryAtPath:directoryPath withIntermediateDirectories:YES attributes:nil error:nil];
+
+			// save the notification attachments to newly created attachments folder
+			NSString* fileName = [attachmentsDirectory objectAtIndex:i];
+			NSString* filePath = [NSString stringWithFormat:@"%@%@", attachmentsDirectoryPath, fileName];
+			NSData* attachmentData = UIImageJPEGRepresentation([UIImage imageWithContentsOfFile:filePath], 1);
+			[attachmentData writeToFile:[NSString stringWithFormat:@"%@%@", directoryPath, fileName] atomically:YES];
+
+			// save the attachments names to an array to access them later
+			[attachments addObject:fileName];
 		}
 
 		// save all details
