@@ -1,5 +1,7 @@
 #import "VeToggle.h"
 
+BOOL enabled = NO;
+
 // control center toggle
 BOOL isLoggingTemporarilyDisabled = NO;
 
@@ -15,11 +17,13 @@ BOOL dontShowToggleWarningAgain = NO;
     self = [super init];
 
     self.preferences = [[HBPreferences alloc] initWithIdentifier:@"love.litten.vepreferences"];
+    [[self preferences] registerBool:&enabled default:NO forKey:@"Enabled"];
     [[self preferences] registerBool:&isLoggingTemporarilyDisabled default:NO forKey:@"isLoggingTemporarilyDisabled"];
     [[self preferences] registerBool:&biometricProtectionSwitch default:NO forKey:@"biometricProtection"];
     [[self preferences] registerBool:&dontShowToggleWarningAgain default:NO forKey:@"dontShowToggleWarningAgain"];
 
-    return self;
+    if (enabled) return self;
+    else return nil;
 
 }
 
