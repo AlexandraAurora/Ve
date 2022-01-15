@@ -8,6 +8,7 @@
 
 	%orig;
 
+	BOOL isLoggingTemporarilyDisabled = [[preferences valueForKey:@"isLoggingTemporarilyDisabled"] boolValue];
 	if (isLoggingTemporarilyDisabled) return;
 
 	BBBulletin* bulletin = arg1;
