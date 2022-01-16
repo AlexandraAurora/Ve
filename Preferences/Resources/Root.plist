@@ -92,6 +92,36 @@
 			<key>defaults</key>
 			<string>love.litten.vepreferences</string>
 			<key>key</key>
+			<string>threshhold</string>
+			<key>label</key>
+			<string>Display Limit of %i Rapid-Fire Entries</string>
+			<key>max</key>
+			<real>100</real>
+			<key>min</key>
+			<real>1</real>
+			<key>singularLabel</key>
+			<string>No Rapid-Fire Display Limit</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>love.litten.vepreferences</string>
+			<key>key</key>
+			<string>hideExcess</string>
+			<key>label</key>
+			<string>Collapse (not Tally) Rapid-Fire Entries</string>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>HBStepperTableCell</string>
+			<key>default</key>
+			<real>1</real>
+			<key>defaults</key>
+			<string>love.litten.vepreferences</string>
+			<key>key</key>
 			<string>entryLimit</string>
 			<key>label</key>
 			<string>Limit to %i Entries</string>

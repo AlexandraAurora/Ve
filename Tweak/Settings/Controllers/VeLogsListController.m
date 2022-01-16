@@ -8,6 +8,10 @@ BOOL authenticated = NO;
 NSString* timeFormatValue = @"HH:mm";
 NSString* dateFormatValue = @"dd.MM.YYYY";
 
+// display settings
+NSUInteger threshholdValue = 1;
+BOOL hideExcessSwitch = YES;
+
 @implementation VeLogsListController
 
 - (void)viewDidLoad { // add the settings button and pull to refresh, also use biometrics if enabled
@@ -57,8 +61,10 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
     // preferences
     self.preferences = [[HBPreferences alloc] initWithIdentifier:@"love.litten.vepreferences"];
     [[self preferences] registerBool:&biometricProtectionSwitch default:NO forKey:@"biometricProtection"];
-	[[self preferences] registerObject:&timeFormatValue default:@"HH:mm" forKey:@"timeFormat"];
-	[[self preferences] registerObject:&dateFormatValue default:@"dd.MM.YYYY" forKey:@"dateFormat"];
+    [[self preferences] registerObject:&timeFormatValue default:@"HH:mm" forKey:@"timeFormat"];
+    [[self preferences] registerObject:&dateFormatValue default:@"dd.MM.YYYY" forKey:@"dateFormat"];
+    [[self preferences] registerUnsignedInteger:&threshholdValue default:1 forKey:@"threshhold"];
+    [[self preferences] registerBool:&hideExcessSwitch default:YES forKey:@"hideExcess"];
 
     if (biometricProtectionSwitch && !authenticated) { // don't display any specifiers until authenticated, if protection is enabled
         [self removeContiguousSpecifiers:_specifiers animated:NO];
@@ -119,13 +125,11 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
         return _specifiers;
     }
 
-
     // list notifications
     [self createNotificationSpecifiersFromLogs:[self logs] withSearch:nil];
     [_specifiers addObjectsFromArray:[self notificationSpecifiers]];
 
-	return _specifiers;
-
+    return _specifiers;
 }
 
 - (BOOL)shouldReloadSpecifiersOnResume { // prevent the controller from reloading the view after inactivity
@@ -137,8 +141,13 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
 - (void)createNotificationSpecifiersFromLogs:(NSArray *)logs withSearch:(NSString *)search {
 
     self.notificationSpecifiers = [NSMutableArray new];
+    NSDateFormatter* dateFormat = [NSDateFormatter new];
+    [dateFormat setDateFormat:[NSString stringWithFormat:@"EEEE, %@ %@", dateFormatValue, timeFormatValue]];
+    NSDictionary* log = [logs firstObject];
+    NSString* currentTimestamp = [dateFormat stringFromDate:[log objectForKey:@"date"]];
+    NSString* previousTimestamp = currentTimestamp;
 
-    for (NSDictionary* log in [self logs]) {
+    for (NSUInteger i = 0, timesFound = 1; i < [logs count]; i++) {
         if (!search || ([[log objectForKey:@"title"] rangeOfString:search options:NSCaseInsensitiveSearch].location != NSNotFound || [[log objectForKey:@"message"] rangeOfString:search options:NSCaseInsensitiveSearch].location != NSNotFound)) {
             NSString* title = [log objectForKey:@"bundleID"]; // this is the fallback and will be overwritten if the title or display name is available
             if (![[log objectForKey:@"title"] isEqualToString:@""]) title = [NSString stringWithFormat:@"%@", [log objectForKey:@"title"]];
@@ -159,6 +168,41 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
             [logSpecifier setProperty:timeFormatValue forKey:@"timeFormat"];
             [logSpecifier setProperty:dateFormatValue forKey:@"dateFormat"];
             [[self notificationSpecifiers] addObject:logSpecifier];
+            
+            // Check if the next notification was in the same minute
+            if (!search) {
+                log = (i == [logs count] - 1) ? nil : logs[i + 1];
+                currentTimestamp = log ? [dateFormat stringFromDate:[log objectForKey:@"date"]] : @"";
+
+                if (![previousTimestamp isEqualToString:currentTimestamp]) {
+                    if (threshholdValue > 1 && timesFound >= threshholdValue) {
+                        NSString* bundleID = [logs[i] objectForKey:@"bundleID"];
+                        for (NSUInteger j = 1; j <= timesFound; j++) {
+                            if (hideExcessSwitch) {
+                                PSSpecifier* last = [_specifiers lastObject];
+                                NSString* bundle = last.properties[@"bundleID"];
+                                if (![bundle isEqualToString:@"com.apple.Preferences"] && ![bundle isEqualToString:bundleID])
+                                    bundleID = @"com.apple.Preferences";
+                                if (j != timesFound) [_specifiers removeLastObject];
+                                else {
+                                    // Replace remaining notification with summary
+                                    NSString* title = [NSString stringWithFormat:@"%lu notifications hidden", timesFound];
+                                    [last setProperty:bundleID forKey:@"bundleID"];
+                                    [last setProperty:@"Notification Log" forKey:@"displayName"];
+                                    [last setProperty:title forKey:@"title"];
+                                }
+                            } else {
+                                PSSpecifier* k = _specifiers[[_specifiers count] - j];
+                                NSString* format = [NSString stringWithFormat:@"%@ (#%lu)", timeFormatValue, j];
+                                [k setProperty:format forKey:@"timeFormat"];
+                            }
+                        }
+                    }
+                    timesFound = 0;
+                }
+                previousTimestamp = currentTimestamp;
+                timesFound += 1;
+            }
         }
     }
 
