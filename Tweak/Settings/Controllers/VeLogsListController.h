@@ -3,6 +3,7 @@
 #import <Preferences/PSSpecifier.h>
 #import <LocalAuthentication/LocalAuthentication.h>
 #import "../Custom-Cells/VeStatisticsCell.h"
+#import "../Custom-Cells/VeSearchBarCell.h"
 #import "../Custom-Cells/VeNotificationCell.h"
 #import "VeAdvancedListController.h"
 #import "VeDetailViewListController.h"
@@ -13,6 +14,9 @@
 @property(nonatomic, retain)UIButton* settingsButton;
 @property(nonatomic, retain)UIBarButtonItem* item;
 @property(nonatomic, retain)UIRefreshControl* pullToRefreshControl;
+@property(nonatomic, retain)NSArray* logs;
+@property(nonatomic, retain)NSMutableArray* notificationSpecifiers;
+- (void)createNotificationSpecifiersFromLogs:(NSArray *)logs withSearch:(NSString *)search;
 - (void)presentAdvancedController;
 - (void)pullToRefresh;
 - (void)expandLog:(PSSpecifier *)specifier;

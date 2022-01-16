@@ -68,12 +68,13 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
 
     _specifiers = [NSMutableArray new];
     NSDictionary* logsDictionary = [NSDictionary dictionaryWithContentsOfFile:@"/var/mobile/Library/Preferences/love.litten.ve-logs.plist"];
-    NSArray* logs = [logsDictionary objectForKey:@"loggedNotifications"];
+    self.logs = [logsDictionary objectForKey:@"loggedNotifications"];
 
 
-    // statistics
-    [_specifiers addObject:[PSSpecifier groupSpecifierWithName:@"Statistics"]];
+    // statistics and search bar
+    [_specifiers addObject:[PSSpecifier groupSpecifierWithName:@"Statistics & Search"]];
 
+    // statistics cell
     PSSpecifier* statisticsSpecifier = [PSSpecifier preferenceSpecifierNamed:nil target:self set:nil get:nil detail:nil cell:PSStaticTextCell edit:nil];
     [statisticsSpecifier setProperty:[VeStatisticsCell class] forKey:@"cellClass"];
     [statisticsSpecifier setProperty:@(YES) forKey:@"enabled"];
@@ -81,7 +82,7 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
 
     NSUInteger logsFromToday = 0;
     NSUInteger logsFromThePastSevenDays = 0;
-    for (NSDictionary* log in logs) {
+    for (NSDictionary* log in [self logs]) {
         if ([[NSCalendar currentCalendar] isDateInToday:[log objectForKey:@"date"]]) logsFromToday += 1;
 
 		NSCalendar* calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -91,13 +92,25 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
     [statisticsSpecifier setProperty:[NSString stringWithFormat:@"%lu", logsFromToday] forKey:@"todayValue"];
     [statisticsSpecifier setProperty:[NSString stringWithFormat:@"%lu", logsFromThePastSevenDays] forKey:@"pastSevenDaysValue"];
 
-    [statisticsSpecifier setProperty:[NSString stringWithFormat:@"%lu", [logs count]] forKey:@"currentlyStoredValue"];
+    [statisticsSpecifier setProperty:[NSString stringWithFormat:@"%lu", [[self logs] count]] forKey:@"currentlyStoredValue"];
     [statisticsSpecifier setProperty:[NSString stringWithFormat:@"%d", [[logsDictionary objectForKey:@"totalLoggedNotificationCount"] intValue]] forKey:@"totalStoredValue"];
     [_specifiers addObject:statisticsSpecifier];
 
+    // search bar cell
+    PSSpecifier* searchBarSpecifier = [PSSpecifier preferenceSpecifierNamed:nil target:self set:nil get:nil detail:nil cell:PSStaticTextCell edit:nil];
+    [searchBarSpecifier setProperty:[VeSearchBarCell class] forKey:@"cellClass"];
+    [searchBarSpecifier setProperty:@(YES) forKey:@"enabled"];
+    [searchBarSpecifier setProperty:@"50" forKey:@"height"];
+
+    UISearchBar* searchBar = [UISearchBar new];
+    [searchBar setDelegate:self];
+    [searchBarSpecifier setProperty:searchBar forKey:@"searchBar"];
+    
+    [_specifiers addObject:searchBarSpecifier];
+
 
     // if no logs are stored yet return here
-    if ([logs count] == 0) {
+    if ([[self logs] count] == 0) {
         PSSpecifier* emptyLogsSpecifier = [PSSpecifier preferenceSpecifierNamed:nil target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
     	[emptyLogsSpecifier setProperty:@"No logs have been taken yet." forKey:@"footerText"];
         [emptyLogsSpecifier setProperty:@(1) forKey:@"footerAlignment"];
@@ -108,29 +121,8 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
 
 
     // list notifications
-    [_specifiers addObject:[PSSpecifier groupSpecifierWithName:@"Notifications"]];
-
-    for (NSDictionary* log in logs) {
-        NSString* title = [log objectForKey:@"bundleID"]; // this is the fallback and will be overwritten if the title or display name is available
-        if (![[log objectForKey:@"title"] isEqualToString:@""]) title = [NSString stringWithFormat:@"%@", [log objectForKey:@"title"]];
-        else if ([[log objectForKey:@"title"] isEqualToString:@""] && ![[log objectForKey:@"displayName"] isEqualToString:@""]) title = [log objectForKey:@"displayName"];
-
-        PSSpecifier* logSpecifier = [PSSpecifier preferenceSpecifierNamed:nil target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
-        [logSpecifier setProperty:[VeNotificationCell class] forKey:@"cellClass"];
-        [logSpecifier setButtonAction:@selector(expandLog:)];
-        [logSpecifier setProperty:@(YES) forKey:@"enabled"];
-        [logSpecifier setProperty:@"60" forKey:@"height"];
-        [logSpecifier setProperty:[log objectForKey:@"identifier"] forKey:@"identifier"];
-        [logSpecifier setProperty:[log objectForKey:@"bundleID"] forKey:@"bundleID"];
-        [logSpecifier setProperty:[log objectForKey:@"displayName"] forKey:@"displayName"];
-        [logSpecifier setProperty:title forKey:@"title"];
-        [logSpecifier setProperty:[log objectForKey:@"message"] forKey:@"message"];
-        [logSpecifier setProperty:[log objectForKey:@"attachments"] forKey:@"attachments"];
-        [logSpecifier setProperty:[log objectForKey:@"date"] forKey:@"date"];
-        [logSpecifier setProperty:timeFormatValue forKey:@"timeFormat"];
-        [logSpecifier setProperty:dateFormatValue forKey:@"dateFormat"];
-        [_specifiers addObject:logSpecifier];
-    }
+    [self createNotificationSpecifiersFromLogs:[self logs] withSearch:nil];
+    [_specifiers addObjectsFromArray:[self notificationSpecifiers]];
 
 	return _specifiers;
 
@@ -139,6 +131,46 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
 - (BOOL)shouldReloadSpecifiersOnResume { // prevent the controller from reloading the view after inactivity
 
     return false;
+
+}
+
+- (void)createNotificationSpecifiersFromLogs:(NSArray *)logs withSearch:(NSString *)search {
+
+    self.notificationSpecifiers = [NSMutableArray new];
+
+    for (NSDictionary* log in [self logs]) {
+        if (!search || ([[log objectForKey:@"title"] rangeOfString:search options:NSCaseInsensitiveSearch].location != NSNotFound || [[log objectForKey:@"message"] rangeOfString:search options:NSCaseInsensitiveSearch].location != NSNotFound)) {
+            NSString* title = [log objectForKey:@"bundleID"]; // this is the fallback and will be overwritten if the title or display name is available
+            if (![[log objectForKey:@"title"] isEqualToString:@""]) title = [NSString stringWithFormat:@"%@", [log objectForKey:@"title"]];
+            else if ([[log objectForKey:@"title"] isEqualToString:@""] && ![[log objectForKey:@"displayName"] isEqualToString:@""]) title = [log objectForKey:@"displayName"];
+
+            PSSpecifier* logSpecifier = [PSSpecifier preferenceSpecifierNamed:nil target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
+            [logSpecifier setProperty:[VeNotificationCell class] forKey:@"cellClass"];
+            [logSpecifier setButtonAction:@selector(expandLog:)];
+            [logSpecifier setProperty:@(YES) forKey:@"enabled"];
+            [logSpecifier setProperty:@"60" forKey:@"height"];
+            [logSpecifier setProperty:[log objectForKey:@"identifier"] forKey:@"identifier"];
+            [logSpecifier setProperty:[log objectForKey:@"bundleID"] forKey:@"bundleID"];
+            [logSpecifier setProperty:[log objectForKey:@"displayName"] forKey:@"displayName"];
+            [logSpecifier setProperty:title forKey:@"title"];
+            [logSpecifier setProperty:[log objectForKey:@"message"] forKey:@"message"];
+            [logSpecifier setProperty:[log objectForKey:@"attachments"] forKey:@"attachments"];
+            [logSpecifier setProperty:[log objectForKey:@"date"] forKey:@"date"];
+            [logSpecifier setProperty:timeFormatValue forKey:@"timeFormat"];
+            [logSpecifier setProperty:dateFormatValue forKey:@"dateFormat"];
+            [[self notificationSpecifiers] addObject:logSpecifier];
+        }
+    }
+
+    if ([[self notificationSpecifiers] count] > 0) {
+        [[self notificationSpecifiers] insertObject:[PSSpecifier groupSpecifierWithName:@"Notifications"] atIndex:0];
+    } else {
+        PSSpecifier* nothingFoundSpecifier = [PSSpecifier preferenceSpecifierNamed:nil target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
+    	[nothingFoundSpecifier setProperty:@"Nothing to be found that matches your search." forKey:@"footerText"];
+        [nothingFoundSpecifier setProperty:@(1) forKey:@"footerAlignment"];
+        [[self notificationSpecifiers] insertObject:nothingFoundSpecifier atIndex:0];
+    }
+
 
 }
 
@@ -160,6 +192,33 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
             [[self pullToRefreshControl] setAlpha:1];
         } completion:nil];
     }];
+
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+
+    [self removeContiguousSpecifiers:[self notificationSpecifiers]];
+    
+    if ([searchText length] > 0) {
+        [self createNotificationSpecifiersFromLogs:[self logs] withSearch:searchText];
+    } else {
+        [self createNotificationSpecifiersFromLogs:[self logs] withSearch:nil];
+        [searchBar performSelector:@selector(resignFirstResponder) withObject:nil afterDelay:0.1];
+    }
+    
+    [self insertContiguousSpecifiers:[self notificationSpecifiers] atIndex:[_specifiers count]];
+
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+
+    [searchBar resignFirstResponder];
+
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+
+    [searchBar resignFirstResponder];
 
 }
 
