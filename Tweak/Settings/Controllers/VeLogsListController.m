@@ -143,11 +143,11 @@ BOOL hideExcessSwitch = YES;
     self.notificationSpecifiers = [NSMutableArray new];
     NSDateFormatter* dateFormat = [NSDateFormatter new];
     [dateFormat setDateFormat:[NSString stringWithFormat:@"EEEE, %@ %@", dateFormatValue, timeFormatValue]];
-    NSDictionary* log = [logs firstObject];
+    NSDictionary* log = [[self logs] firstObject];
     NSString* currentTimestamp = [dateFormat stringFromDate:[log objectForKey:@"date"]];
     NSString* previousTimestamp = currentTimestamp;
 
-    for (NSUInteger i = 0, timesFound = 1; i < [logs count]; i++) {
+    for (NSUInteger i = 0, timesFound = 1; i < [[self logs] count]; i++) {
         if (!search || ([[log objectForKey:@"title"] rangeOfString:search options:NSCaseInsensitiveSearch].location != NSNotFound || [[log objectForKey:@"message"] rangeOfString:search options:NSCaseInsensitiveSearch].location != NSNotFound)) {
             NSString* title = [log objectForKey:@"bundleID"]; // this is the fallback and will be overwritten if the title or display name is available
             if (![[log objectForKey:@"title"] isEqualToString:@""]) title = [NSString stringWithFormat:@"%@", [log objectForKey:@"title"]];
@@ -171,12 +171,12 @@ BOOL hideExcessSwitch = YES;
 
             // Check if the next notification was in the same minute
             if (!search) {
-                log = (i == [logs count] - 1) ? nil : logs[i + 1];
+                log = (i == [[self logs] count] - 1) ? nil : [self logs][i + 1];
                 currentTimestamp = log ? [dateFormat stringFromDate:[log objectForKey:@"date"]] : @"";
 
                 if (![previousTimestamp isEqualToString:currentTimestamp]) {
                     if (threshholdValue > 1 && timesFound >= threshholdValue) {
-                        NSString* bundleID = [logs[i] objectForKey:@"bundleID"];
+                        NSString* bundleID = [[self logs][i] objectForKey:@"bundleID"];
                         for (NSUInteger j = 1; j <= timesFound; j++) {
                             if (hideExcessSwitch) {
                                 PSSpecifier* last = [_specifiers lastObject];
