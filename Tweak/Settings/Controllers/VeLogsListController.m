@@ -168,7 +168,7 @@ BOOL hideExcessSwitch = YES;
             [logSpecifier setProperty:timeFormatValue forKey:@"timeFormat"];
             [logSpecifier setProperty:dateFormatValue forKey:@"dateFormat"];
             [[self notificationSpecifiers] addObject:logSpecifier];
-            
+
             // Check if the next notification was in the same minute
             if (!search) {
                 log = (i == [logs count] - 1) ? nil : logs[i + 1];
