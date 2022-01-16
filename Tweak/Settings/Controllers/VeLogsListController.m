@@ -210,6 +210,18 @@ NSString* dateFormatValue = @"dd.MM.YYYY";
 
 }
 
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+
+    [searchBar setShowsCancelButton:YES animated:YES];
+
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+
+    [searchBar setShowsCancelButton:NO animated:YES];
+
+}
+
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
 
     [searchBar resignFirstResponder];

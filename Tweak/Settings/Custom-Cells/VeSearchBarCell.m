@@ -12,7 +12,6 @@
 	[[self searchBar] setPlaceholder:@"Search"];
     [[self searchBar] setBackgroundImage:[UIImage new]];
     [[self searchBar] setReturnKeyType:UIReturnKeyDone];
-    [[self searchBar] setShowsCancelButton:YES animated:YES];
     [self addSubview:[self searchBar]];
     
     [[self searchBar] setTranslatesAutoresizingMaskIntoConstraints:NO];
