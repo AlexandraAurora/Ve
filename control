@@ -1,0 +1,9 @@
+Package: codes.aurora.ve
+Name: Vē
+Version: 2.0
+Architecture: iphoneos-arm
+Description: Natively integrated notification logger.
+Maintainer: Alexandra Aurora Göttlicher
+Author: Alexandra Aurora Göttlicher, 74k1_
+Section: Tweaks
+Depends: firmware (>= 14.0), mobilesubstrate, preferenceloader
